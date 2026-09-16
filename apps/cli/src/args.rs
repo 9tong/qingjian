@@ -73,9 +73,9 @@ pub struct Args {
     #[arg(long)]
     pub english_mode: bool,
 
-    /// 关掉中文优先（配置 [general] chinese_first = false）：拼音不像话的输入英文词排第一，评测两种排法用
+    /// 打开中文优先（配置 [general] chinese_first = true）：整段是英文词时中文候选排第一、英文第二，评测两种排法用
     #[arg(long)]
-    pub english_first: bool,
+    pub chinese_first: bool,
 
     /// 双拼方案（xiaohe / ziranma / microsoft / sogou），覆盖配置里的 [general] shuangpin；off 强制全拼
     #[arg(long)]

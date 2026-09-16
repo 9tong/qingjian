@@ -99,7 +99,7 @@ pub(crate) fn view(settings: &Settings, context: &mut ViewContext<Settings>) -> 
         ),
         field(
             "输入拼音时中文候选排在英文词前面",
-            "整段输入是英文词时（hello、key）英文词排第二，空格上屏的仍是中文；关掉的话拼音不成立的输入英文词排第一。",
+            "开着时整段输入是英文词时（hello、key）英文词排第二，空格上屏的仍是中文；关着（缺省）拼音不成立的输入英文词排第一。",
             ToggleSwitch::new()
                 .is_on(g.chinese_first)
                 .on_toggled(context.callback(Message::ChineseFirst)),

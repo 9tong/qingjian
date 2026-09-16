@@ -136,7 +136,7 @@ impl GeneralPage {
         note(
             layout,
             mtm,
-            "整段输入是英文词时（hello、key）英文词排第二，空格上屏的仍是中文；不勾的话拼音不成立的输入英文词排第一。",
+            "勾上后整段输入是英文词时（hello、key）英文词排第二，空格上屏的仍是中文；不勾（缺省）拼音不成立的输入英文词排第一。",
         );
         Self {
             learning_language,
