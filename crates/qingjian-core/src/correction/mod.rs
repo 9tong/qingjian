@@ -112,9 +112,14 @@ fn candidates_from(input: &str, variants: Vec<(Edit, String)>) -> Vec<Correction
     // 凑得出「每个音节都完整」的变体时只在这些里挑，末尾没敲完的不参与：残尾按前缀能匹配到高频词，
     // 得分往往压过整段完整的纠正（`keyyi` 删一个 y 是 可以，`ke yi y…` 却出 可以有；`weti` 的 `wei t…` 会抢出 委托）。
     // 末尾是落单单字母的完整变体不算数（`migntia` 换一个字母能凑出 `mian ti a`，那正是「可能敲反了」的可疑切法），
-    // 这时末尾没敲完的 `ming tia…` 仍参与。
+    // 只有一个音节的也不算数（`zehg` 把 h 换成 n 是完整的 `zeng`，但四个字母以上只拼出一个音节多半是还没敲完），
+    // 改在刚敲的最后一个键上的也不算数（`zehg` 把 g 换成 a 是完整的 `ze ha`，可 g 是刚敲下去的，
+    // 和「删掉刚敲的最后一个字母不算纠正」一个道理）；这些情况下末尾没敲完的 `zhe g…` 仍参与。
     let settled = found.iter().any(|c| {
-        c.segmentation.incomplete_count() == 0 && !trailing_single_letter(Some(&c.segmentation))
+        c.segmentation.incomplete_count() == 0
+            && c.segmentation.syllables.len() >= 2
+            && !trailing_single_letter(Some(&c.segmentation))
+            && !c.edit.touches_last_letter(c.corrected.len())
     });
     if settled {
         found
@@ -216,6 +221,12 @@ mod tests {
                 "{input}"
             );
         }
+        // zehg 换掉 h 是单音节的 zeng、换掉刚敲的 g 是 ze ha：都不算数，zhe g… 仍在
+        assert!(
+            candidates("zehg")
+                .iter()
+                .any(|c| c.corrected == "zheg" && c.segmentation.last_is_partial())
+        );
         // migntia 换一个字母能凑出 mian ti a，但末尾落单的 a 不算「完整」：ming tia… 仍在
         assert!(
             candidates("migntia")
